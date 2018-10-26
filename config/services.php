@@ -13,6 +13,10 @@ return [
     | to have a conventional place to find your various credentials.
     |
     */
+    'search' => [
+        'enabled' => env('SEARCH_ENABLED', false),
+        'hosts' => explode(',', env('SEARCH_HOSTS')),
+    ],
 
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
