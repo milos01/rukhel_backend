@@ -28,7 +28,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'token']], functi
     Route::get('/', function (\App\Http\Requests\UserRequest $request, UserRepository $repository) {
 //        $articles = $repository->search($request->q);
         return response($request->user(), 200);
-    });
+    })->middleware("role:ADMIN,USER");
 
     Route::put('/', 'UserController@updateUser')->name('updateUser');
     Route::post('change-password', 'UserController@resetPassword')->name('resetPassword');

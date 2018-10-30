@@ -3,6 +3,10 @@
 namespace App\Http;
 
 use App\Http\Middleware\CheckOAuthToken;
+use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\HasRoleAdmin;
+use App\Http\Middleware\HasRoleModerator;
+use App\Http\Middleware\HasRoleUser;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -63,5 +67,6 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'token' => CheckOAuthToken::class,
+        'role' => CheckRole::class,
     ];
 }
