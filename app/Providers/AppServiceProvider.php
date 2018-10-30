@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Support\ServiceProvider;
 use Elasticsearch\Client;
+use Optimus\ApiConsumer\Router;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,7 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->app->singleton('apiconsumer', function(){
+            $app = app();
+            return new Router($app, $app['request'], $app['router']);
+        });
     }
 
     /**

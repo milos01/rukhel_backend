@@ -13,6 +13,7 @@
         "laravel/passport": "^6.0",
         "laravel/tinker": "^1.0",
         "myclabs/php-enum": "^1.6",
+        "optimus/api-consumer": "0.2.*",
         "paragonie/random_compat": "2.0"
     },
     "require-dev": {
