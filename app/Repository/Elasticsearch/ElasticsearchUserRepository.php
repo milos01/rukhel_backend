@@ -26,8 +26,6 @@ class ElasticsearchUserRepository implements UserRepository
     public function search(string $query = ""): Collection {
         $items = $this->searchOnElasticsearch($query);
 
-        dd($items);
-
         return $this->buildCollection($items);
     }
 
@@ -40,43 +38,23 @@ class ElasticsearchUserRepository implements UserRepository
             'type' => $instance->getSearchType(),
             'body' => [
                 'query' => [
-                    'multi_match' => [
-                        'fields' => ['email', 'username'],
-                        'query' => $query,
-                    ],
-                ],
-            ],
+                    "query_string" => [
+                        "fields" => ["full_name^2", "username"],
+                        "query" => $query . "*",
+                        "allow_leading_wildcard" => false,
+                        'fuzziness' => 'AUTO',
+                    ]
+                ]
+            ]
         ]);
 
         return $items;
     }
 
     private function buildCollection(array $items): Collection {
-        /**
-         * The data comes in a structure like this:
-         *
-         * [
-         *      'hits' => [
-         *          'hits' => [
-         *              [ '_source' => 1 ],
-         *              [ '_source' => 2 ],
-         *          ]
-         *      ]
-         * ]
-         *
-         * And we only care about the _source of the documents.
-         */
         $hits = array_pluck($items['hits']['hits'], '_source') ?: [];
-
-        $sources = array_map(function ($source) {
-            // The hydrate method will try to decode this
-            // field but ES gives us an array already.
-            $source['tags'] = json_encode($source['tags']);
-            return $source;
-        }, $hits);
-
         // We have to convert the results array into Eloquent Models.
-        return User::hydrate($sources);
+        return User::hydrate($hits);
     }
 
     public function getById(int $id): Collection

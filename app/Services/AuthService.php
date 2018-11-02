@@ -92,5 +92,4 @@ class AuthService
 
         $this->cookie->queue($this->cookie->forget("refreshToken"));
     }
-
 }

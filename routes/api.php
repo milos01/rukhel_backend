@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use \App\Model\Enums\UserType;
 use \App\Repository\UserRepository;
-use \App\Http\Middleware\CheckOAuthToken;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,17 +24,20 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'token']], function (){
-    Route::get('/', function (\App\Http\Requests\UserRequest $request, UserRepository $repository) {
-//        $articles = $repository->search($request->q);
+    Route::get('/', function (Request $request) {
         return response($request->user(), 200);
     })->middleware("role:ADMIN,USER");
 
     Route::put('/', 'UserController@updateUser')->name('updateUser');
-    Route::post('change-password', 'UserController@resetPassword')->name('resetPassword');
-    Route::get('/{id}', 'UserController@getUserById');
-    Route::get('/moderators','UserController@getModerators');
-    Route::post('/find','UserController@findUser'); //find users for tasks (user task search)
-    Route::post('api/application/getusers2','UserController@getApiUsers2'); //find all users (user search)
+    Route::post('/change-password', 'UserController@changePassword');
+    Route::get('/{username}', 'UserController@getUserByUsername');
+    Route::delete('/{username}', 'UserController@deleteUserByUsername')->middleware("role:ADMIN");
+    Route::get('/activate/{username}', 'UserController@activateUser')->middleware("role:ADMIN");
+    Route::get('/moderators','UserController@getStaff')->middleware("role:ADMIN");
+    Route::post('/find','UserController@findUsers'); //find users for tasks (user task search)
+    Route::get('/upgrade/{username}', 'UserController@upgradeToAdmin')->middleware("role:ADMIN");
+    Route::get('/downgrade/{username}', 'UserController@downgradeToModerator')->middleware("role:ADMIN");
+    Route::post('/add-staff', 'UserController@addStaff')->middleware("role:ADMIN");
 });
 
 
