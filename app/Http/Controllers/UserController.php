@@ -137,7 +137,7 @@ class UserController extends Controller
             $this->userService->addStaff($request);
             return response("", 200);
         }catch(HttpException $exception){
-            return response(HttpResponse::handleResponse($exception), $exception->getStatusCode());
+            return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
         }
     }
 

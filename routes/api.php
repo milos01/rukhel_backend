@@ -40,6 +40,20 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'token']], functi
     Route::post('/add-staff', 'UserController@addStaff')->middleware("role:ADMIN");
 });
 
+Route::group(['middleware' => ['auth:api', 'token']], function (){
+    Route::post('/category', 'CategoryController@addCategory')->middleware("role:ADMIN");
+    Route::delete('/category/{name}', 'CategoryController@deleteCategory')->middleware("role:ADMIN");
+    Route::put('/category/{name}', 'CategoryController@activateCategory')->middleware("role:ADMIN");
+    Route::get('/categories', 'CategoryController@getCategories')->middleware("role:ADMIN");
+});
+
+Route::group(['prefix' => 'task', 'middleware' => ['auth:api', 'token']], function (){
+    Route::post('/', 'TaskController@addTask')->middleware("role:ADMIN,MODERATOR,USER");
+    Route::get('/{id}', 'TaskController@getTask')->middleware("role:ADMIN,MODERATOR,USER");
+    Route::get('/{id}/take', 'TaskController@takeTask')->middleware("role:ADMIN,MODERATOR");
+    Route::get('/assigned', 'TaskController@getAssigned')->middleware("role:ADMIN,MODERATOR");
+    Route::delete('/{id}', 'TaskController@inactiveTask')->middleware("role:ADMIN,MODERATOR");
+});
 
 
 Route::get('/test', function (Request $request) {

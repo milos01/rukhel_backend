@@ -29,4 +29,12 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'provider', 'provider_id'
     ];
+
+    /**
+     * Get all tasks assigned to user.
+     */
+    public function problems()
+    {
+        return $this->belongsToMany('App\Problem', 'user_problem', 'user_id', 'task_id')->withTimestamps();
+    }
 }

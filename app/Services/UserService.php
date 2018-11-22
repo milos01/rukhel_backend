@@ -76,8 +76,8 @@ class UserService
             "email" => $request->email,
             "username" => $request->username,
             "password" => bcrypt($request->password),
-            "role" => UserType::USER(),
-            "activated" => 0,
+            "role" => UserType::MODERATOR(),
+            "activated" => 1,
         ]);
     }
 
