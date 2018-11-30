@@ -141,4 +141,13 @@ class UserController extends Controller
         }
     }
 
+    public function getAssignedTasks(Request $request){
+        try{
+            $tasks = $this->userService->getAssignedTasks($request->user()->id);
+            return response($tasks, 200);
+        }catch(HttpException $exception){
+            return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
+        }
+    }
+
 }

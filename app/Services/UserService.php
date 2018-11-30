@@ -81,6 +81,11 @@ class UserService
         ]);
     }
 
+    public function getAssignedTasks($id){
+        $user = User::findById($id);
+
+        return $user->tasks()->get();
+    }
     private function findUserByUsername($username){
         $user = User::where("username", $username)->first();
 

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Task extends Model
 {
 
-    use SoftDeletes, BaseModel;
+    use SoftDeletes, Searchable, BaseModel;
 
     protected $table = "tasks";
 
@@ -21,11 +21,12 @@ class Task extends Model
         'category_id',
         'solution_description',
         'time_ends_at',
-        'status'
+        'status',
+        'biding_expires_at',
     ];
 
     protected $hidden = [
-
+        'pivot'
     ];
 
     /**
@@ -54,6 +55,6 @@ class Task extends Model
      */
     public function users()
     {
-        return $this->belongsToMany('App\Problem', 'user_problem', 'user_id', 'task_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'user_task', 'task_id', 'user_id');
     }
 }

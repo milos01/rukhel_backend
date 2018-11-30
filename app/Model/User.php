@@ -10,7 +10,7 @@ use App\Model\Searchable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable, SoftDeletes, Searchable;
+    use HasApiTokens, Notifiable, SoftDeletes, Searchable, BaseModel;
 
     /**
      * The attributes that are mass assignable.
@@ -27,14 +27,14 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'provider', 'provider_id'
+        'password', 'provider', 'provider_id', 'pivot'
     ];
 
     /**
      * Get all tasks assigned to user.
      */
-    public function problems()
+    public function tasks()
     {
-        return $this->belongsToMany('App\Problem', 'user_problem', 'user_id', 'task_id')->withTimestamps();
+        return $this->belongsToMany(Task::class, 'user_task', 'user_id', 'task_id');
     }
 }

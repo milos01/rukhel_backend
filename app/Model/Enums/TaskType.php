@@ -13,9 +13,11 @@ use MyCLabs\Enum\Enum;
 /**
  * @method static Action WAITING()
  * @method static Action SOLVING()
+ * @method static Action EXPIRED()
  */
 class TaskType extends Enum
 {
     private const SOLVING = 'SOLVING';
     private const WAITING = 'WAITING';
+    private const EXPIRED = 'EXPIRED';
 }

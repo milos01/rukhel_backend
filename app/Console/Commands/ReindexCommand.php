@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Model\Task;
 use App\Model\User;
 use Illuminate\Console\Command;
 use Elasticsearch\Client;
@@ -45,6 +46,18 @@ class ReindexCommand extends Command
         $this->info('Indexing all articles. Might take a while...');
 
         foreach (User::cursor() as $model)
+        {
+            $this->search->index([
+                'index' => $model->getSearchIndex(),
+                'type' => $model->getSearchType(),
+                'id' => $model->id,
+                'body' => $model->toSearchArray(),
+            ]);
+            // PHPUnit-style feedback
+            $this->output->write('.');
+        }
+
+        foreach (Task::cursor() as $model)
         {
             $this->search->index([
                 'index' => $model->getSearchIndex(),

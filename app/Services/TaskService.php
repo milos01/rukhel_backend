@@ -12,6 +12,7 @@ namespace App\Services;
 use App\Model\Category;
 use App\Model\Enums\TaskType;
 use App\Model\Task;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -20,7 +21,6 @@ class TaskService
     use UtilService;
 
     public function addTask(Request $request, Category $category){
-
         Task::create([
             "subject" => $request->subject,
             "slug" => str_slug($request->subject, "-"),
@@ -28,8 +28,9 @@ class TaskService
             "category_id" => $category->id,
             "description" => $request->description,
             "solution_description" => $request->solution_description,
+            "biding_expires_at" => Carbon::now()->addMinutes(env("BID_EXPIRE_MINUTES")),
             "status" => "some status",
-            "biding_expires_at" => $this->getTimeNow(),
+
         ]);
     }
 
@@ -52,5 +53,44 @@ class TaskService
         $task = Task::findById($id);
 
         $task->delete();
+    }
+
+    public function getAssignedUsers($id){
+        $task = Task::findById($id);
+
+        return $task->users;
+    }
+
+    public function assignUserToTask($id, $user_id){
+        $task = Task::findById($id);
+
+        $exist = $task->users()->where("user_id", $user_id)->exists();
+
+        if ($exist) {
+            throw new HttpException(422, "User already assigned to task.");
+        }
+
+        $task->users()->attach($user_id);
+    }
+
+    public function dismissUserToTask($id, $user_id){
+        $task = Task::findById($id);
+
+        $exist = $task->users()->where("user_id", $user_id)->exists();
+
+        if(!$exist) {
+            throw new HttpException(422, "User not assigned to task.");
+        }
+
+        $task->users()->detach($user_id);
+    }
+
+    public function resetTaskExpire($id){
+        $task = Task::findById($id);
+
+        $task->update([
+            "biding_expires_at" => $this->getTimeNow()->addMinutes(env("BID_EXPIRE_MINUTES")),
+            "status" => TaskType::WAITING(),
+        ]);
     }
 }

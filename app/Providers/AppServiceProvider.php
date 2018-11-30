@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Repository\Elasticsearch\ElasticsearchTaskRepository;
 use App\Repository\Elasticsearch\ElasticsearchUserRepository;
+use App\Repository\Eloquent\EloquentTaskRepository;
 use App\Repository\Eloquent\EloquentUserRepository;
+use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Support\ServiceProvider;
@@ -40,6 +43,19 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return new ElasticsearchUserRepository(
+                $app->make(Client::class)
+            );
+        });
+
+        $this->app->singleton(TaskRepository::class, function($app) {
+            // This is useful in case we want to turn-off our
+            // search cluster or when deploying the search
+            // to a live, running application at first.
+            if (!config('services.search.enabled')) {
+                return new EloquentTaskRepository();
+            }
+
+            return new ElasticsearchTaskRepository(
                 $app->make(Client::class)
             );
         });
