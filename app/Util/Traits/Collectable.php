@@ -11,13 +11,17 @@ namespace App\Util\Traits;
 
 trait Collectable
 {
-    protected function makeCollection($items, ...$metaData){
-        $collection = collect();
+    protected function makeCollection($items, ...$metaData)
+    {
+        $itemArray["items"] = [];
 
-        $collection->put("items", $items);
-        $collection->put("meta", $metaData);
+        foreach ($items as $item) {
+            array_push($itemArray["items"], $item);
+        }
 
-        return $collection;
+        $itemArray["meta"] = $metaData;
+
+        return $itemArray;
     }
 
 }

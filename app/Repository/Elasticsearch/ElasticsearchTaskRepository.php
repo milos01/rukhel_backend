@@ -31,31 +31,43 @@ class ElasticsearchTaskRepository implements TaskRepository
     }
 
     private function searchOnElasticsearch(string $query, array $termList): array {
-
         $instance = new Task();
 
         $items = $this->search->search([
             'index' => $instance->getSearchIndex(),
             'type' => $instance->getSearchType(),
-            'body' => [
-                'query' => [
+            'body' => $this->filterQuery($query, $termList)
+        ]);
+
+        return $items;
+    }
+
+    private function filterQuery($query, $termList){
+        if ($query === "all"){
+            return [
+                "query" => [
+                    "bool" => [
+                        "filter" => $termList
+                    ]
+                ]
+            ];
+        } else{
+            return [
+                "query" => [
                     "bool" => [
                         "must" => [
                             "query_string" => [
                                 "fields" => ["subject^2", "description"],
-                                "query" => $query . "*",
+                                "query" =>  $query. "*",
                                 "allow_leading_wildcard" => false,
                                 'fuzziness' => 'AUTO',
                             ]
                         ],
                         "filter" => $termList
-
                     ]
                 ]
-            ]
-        ]);
-
-        return $items;
+            ];
+        }
     }
 
     private function buildCollection(array $items): Collection {

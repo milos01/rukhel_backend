@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\CheckOAuthToken;
 use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\Cors;
 use App\Http\Middleware\HasRoleAdmin;
 use App\Http\Middleware\HasRoleModerator;
 use App\Http\Middleware\HasRoleUser;
@@ -68,5 +69,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'token' => CheckOAuthToken::class,
         'role' => CheckRole::class,
+        'cors' => Cors::class,
     ];
 }

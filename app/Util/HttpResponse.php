@@ -13,7 +13,9 @@ class HttpResponse
 {
     public static function handleResponse($message){
         return [
-           "message" => $message,
+           "errors" => [
+               "global" => $message
+           ],
         ];
     }
 

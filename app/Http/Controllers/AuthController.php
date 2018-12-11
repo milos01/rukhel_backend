@@ -34,7 +34,7 @@ class AuthController extends Controller
         try{
             return response($this->authSerice->attemptLogin($request->email, $request->password), 200);
         }catch (InvalidCredentialsException $exception){
-            HttpResponse::handleResponse($exception->getMessage(), $exception->getStatusCode());
+            return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
         }
     }
 

@@ -101,15 +101,25 @@ class TaskController extends Controller
 
     public function getAllTasks(Request $request, TaskRepository $repository){
         try{
-            $filterList = $this->getFilterList($request->all());
+            $category_id = $this->categoryService->findCategoryIdByName($request->category_id);
+            $request["category_id"] = $category_id;
 
+            $pageFromRequest = $request->page;
+            $filterList = $this->getFilterList($request->all());
             $termList = $this->generateTerms($filterList);
 
-            $tasks = $repository->search($request->term, $termList)->forPage($request->page, env("USER_PER_PAGE"));
+            $tasks = $repository->search($request->term, $termList);
+            $totalTasks = $tasks->count();
 
-            return response($this->makeCollection($tasks, [
-                "total" => $tasks->count()
-            ]), 200);
+            $tasks = $tasks->forPage($pageFromRequest, env("USER_PER_PAGE"));
+
+            $arrayItems = $this->makeCollection($tasks, [
+                "page" => $pageFromRequest,
+                "total" => $totalTasks,
+                "total_on_page" => env("USER_PER_PAGE")
+            ]);
+
+            return response($arrayItems, 200);
         }catch(HttpException $exception){
             return response($exception->getMessage(), 500);
         }

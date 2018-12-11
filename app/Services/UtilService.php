@@ -18,8 +18,9 @@ trait UtilService
     }
 
     public function getFilterList($params){
-        if (isset($params["term"])){
+        if (isset($params["term"]) && isset($params["page"])){
             unset($params["term"]);
+            unset($params["page"]);
         }
 
         return $params;

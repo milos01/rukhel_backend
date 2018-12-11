@@ -14,7 +14,7 @@ use \App\Repository\UserRepository;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::group(['prefix' => 'auth'], function () {
+Route::group(['prefix' => 'auth', 'middleware' => 'cors'], function () {
     Route::post('signin', 'AuthController@signin');
     Route::post('signup', 'UserController@signup');
 
