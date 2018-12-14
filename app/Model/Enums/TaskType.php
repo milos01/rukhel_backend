@@ -18,6 +18,9 @@ use MyCLabs\Enum\Enum;
 class TaskType extends Enum
 {
     private const SOLVING = 'SOLVING';
+    private const SOLVED = 'SOLVED';
+    private const NOOFFER = 'NOOFFER';
+    private const PAID = 'PAID';
     private const WAITING = 'WAITING';
     private const EXPIRED = 'EXPIRED';
 }

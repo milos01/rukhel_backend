@@ -20,14 +20,13 @@ class TaskService
 {
     use UtilService;
 
-    public function addTask(Request $request, Category $category){
+    public function addTask(Request $request, $category_id){
         Task::create([
             "subject" => $request->subject,
             "slug" => str_slug($request->subject, "-"),
             "user_creator_id" => $request->user()->id,
-            "category_id" => $category->id,
+            "category_id" => $category_id,
             "description" => $request->description,
-            "solution_description" => $request->solution_description,
             "biding_expires_at" => Carbon::now()->addMinutes(env("BID_EXPIRE_MINUTES")),
             "status" => "some status",
 

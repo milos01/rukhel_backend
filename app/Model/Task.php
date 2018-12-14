@@ -25,6 +25,10 @@ class Task extends Model
         'biding_expires_at',
     ];
 
+    protected $dates = [
+        'biding_expires_at',
+    ];
+
     protected $hidden = [
         'pivot'
     ];

@@ -37,7 +37,7 @@ trait UtilService
 
             $termItem[$key] = $filter;
 
-            $term["term"] = $termItem;
+            $term["match"] = $termItem;
 
 
             array_push($terms,$term);

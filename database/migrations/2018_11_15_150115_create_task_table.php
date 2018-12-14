@@ -24,7 +24,7 @@ class CreateTaskTable extends Migration
             $table->integer('category_id')->unsigned();
             $table->foreign('category_id')->references('id')->on('categories');
             $table->text('description');
-            $table->text('solution_description');
+            $table->text('solution_description')->nullable();
             $table->timestamp('biding_expires_at')->nullable();
             $table->string('status');
             $table->timestamps();

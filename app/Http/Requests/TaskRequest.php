@@ -26,7 +26,7 @@ class TaskRequest extends FormRequest
         return [
             "subject" => "required|unique:tasks|min:3|max:30",
             "description" => "required|min:3|max:5000",
-            "solution_description" => "required|min:3|max:5000",
+            "category" => "required",
         ];
     }
 }

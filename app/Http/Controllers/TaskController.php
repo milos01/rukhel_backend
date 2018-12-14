@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TaskRequest;
+use App\Model\Category;
 use App\Repository\TaskRepository;
 use App\Services\CategoryService;
 use App\Services\TaskService;
@@ -26,9 +27,9 @@ class TaskController extends Controller
 
     public function addTask(TaskRequest $request){
         try{
-            $category = $this->categoryService->findCategoryById($request->category_id);
+            $category_id = $this->categoryService->findCategoryIdByName($request->category);
 
-            $this->taskService->addTask($request, $category);
+            $this->taskService->addTask($request, $category_id);
             return response("", 200);
         }catch(HttpException $exception){
             return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());

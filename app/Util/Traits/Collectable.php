@@ -11,7 +11,7 @@ namespace App\Util\Traits;
 
 trait Collectable
 {
-    protected function makeCollection($items, ...$metaData)
+    protected function makeCollection($items, $metaData)
     {
         $itemArray["items"] = [];
 

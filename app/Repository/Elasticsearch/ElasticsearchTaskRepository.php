@@ -47,8 +47,13 @@ class ElasticsearchTaskRepository implements TaskRepository
             return [
                 "query" => [
                     "bool" => [
-                        "filter" => $termList
+                        "must" => [
+                            $termList
+                        ]
                     ]
+                ],
+                "sort" => [
+                    "id" => ["order" => "asc"]
                 ]
             ];
         } else{
