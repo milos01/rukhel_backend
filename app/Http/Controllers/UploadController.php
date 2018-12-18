@@ -34,6 +34,7 @@ class UploadController extends Controller
     }
 
     public function uploadFile(FileRequest $request, $id){
+//        dd($request->file('file'));
         try{
             $path = Storage::putFile('files', $request->file('file'));
             $hash_name = basename($path);
