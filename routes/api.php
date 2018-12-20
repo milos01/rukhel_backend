@@ -29,6 +29,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'token']], functi
     })->middleware("role:ADMIN,USER");
 
     Route::put('/', 'UserController@updateUser')->name('updateUser');
+    Route::get('/', 'UserController@getUser');
     Route::post('/change-password', 'UserController@changePassword');
     Route::get('/{id}', 'UserController@getUserByUsername');
     Route::delete('/{username}', 'UserController@deleteUserByUsername')->middleware("role:ADMIN");

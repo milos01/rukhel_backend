@@ -45,6 +45,14 @@ class UserController extends Controller
 
     }
 
+    public function getUser(Request $request){
+        try{
+            return response($request->user(0), 200);
+        }catch(HttpException $exception){
+            return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
+        }
+    }
+
     public function updateUser(UserRequest $request){
         try {
             User::where("id", $request->user()->id)->update($request->all());
