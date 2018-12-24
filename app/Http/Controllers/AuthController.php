@@ -9,10 +9,14 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidCredentialsException;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\SigninRequest;
+use App\Mail\ResetPassword;
 use App\Services\AuthService;
 use App\Util\HttpResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AuthController extends Controller
 {
@@ -34,6 +38,16 @@ class AuthController extends Controller
         try{
             return response($this->authSerice->attemptLogin($request->email, $request->password), 200);
         }catch (InvalidCredentialsException $exception){
+            return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
+        }
+    }
+
+    public function sendResetLink(ResetPasswordRequest $request){
+        try{
+            //TODO: implement generating hash specific to user, in AuthService
+            Mail::to("milosa942@gmail.com")->send(new ResetPassword());
+            return response("", 200);
+        }catch(HttpException $exception){
             return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
         }
     }
