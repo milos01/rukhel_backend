@@ -11,14 +11,11 @@ class ResetPassword extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    private $link;
+
+    public function __construct(string $link)
     {
-        //
+        $this->link = $link;
     }
 
     /**
@@ -28,6 +25,6 @@ class ResetPassword extends Mailable
      */
     public function build()
     {
-        return $this->from('milosa942@gmail.com')->view('emails.auth.reset_password');
+        return $this->from('milosa942@gmail.com')->view('emails.auth.reset_password')->with("link", $this->link);
     }
 }

@@ -18,6 +18,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'cors'], function () {
     Route::post('signin', 'AuthController@signin');
     Route::post('signup', 'UserController@signup');
     Route::post('reset-link', 'AuthController@sendResetLink');
+    Route::get('check-hash', 'AuthController@checkHash');
 
     Route::group(['middleware' => 'auth:api'], function() {
         Route::get('logout', 'AuthController@logout');

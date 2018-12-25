@@ -9,10 +9,12 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidCredentialsException;
+use App\Http\Requests\CheckHashRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\SigninRequest;
 use App\Mail\ResetPassword;
 use App\Services\AuthService;
+use App\Services\UserService;
 use App\Util\HttpResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -22,9 +24,12 @@ class AuthController extends Controller
 {
     private $authSerice;
 
-    public function __construct(AuthService $authSerice)
+    private $userService;
+
+    public function __construct(AuthService $authSerice, UserService $userService)
     {
         $this->authSerice = $authSerice;
+        $this->userService = $userService;
     }
 
     public function logout(Request $request)
@@ -44,12 +49,17 @@ class AuthController extends Controller
 
     public function sendResetLink(ResetPasswordRequest $request){
         try{
-            //TODO: implement generating hash specific to user, in AuthService
-            Mail::to("milosa942@gmail.com")->send(new ResetPassword());
+            $user = $this->userService->findUserByEmail($request->email);
+            $link = $this->authSerice->generateResetLink($user);
+            Mail::to("milosa942@gmail.com")->send(new ResetPassword($link));
             return response("", 200);
         }catch(HttpException $exception){
             return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
         }
+    }
+
+    public function checkHash(CheckHashRequest $request){
+        dd($request->token);
     }
 
 }

@@ -8,24 +8,23 @@
 
 namespace App\Services;
 
-
 use App\Model\Enums\UserType;
 use App\Model\User;
-use http\Env\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 
 class UserService
 {
-    public function deleteUserByUsername($username){
+    public function deleteUserByUsername($username)
+    {
         $user = $this->findUserByUsername($username);
 
         $tokens = DB::table('oauth_access_tokens')
             ->where('user_id', $user->id)
             ->where("revoked", false);
 
-        if ($tokens->get()->isEmpty()){
+        if ($tokens->get()->isEmpty()) {
             throw new HttpException(404, "No token for user.");
         }
 
@@ -36,20 +35,22 @@ class UserService
 
     }
 
-    public function activateUser($username){
+    public function activateUser($username)
+    {
         $user = User::onlyTrashed()->where("username", $username)->first();
 
-        if(is_null($user)){
+        if (is_null($user)) {
             throw new HttpException(404, "Deleted user not found.");
         }
 
         $user->restore();
     }
 
-    public function upgradeToAdmin($username){
+    public function upgradeToAdmin($username)
+    {
         $user = $this->findUserByUsername($username);
 
-        if ($user->role == UserType::ADMIN()->getValue()){
+        if ($user->role == UserType::ADMIN()->getValue()) {
             throw new HttpException(400, "Already upgraded.");
         }
 
@@ -58,10 +59,11 @@ class UserService
         ]);
     }
 
-    public function downgradeToModerator($username){
+    public function downgradeToModerator($username)
+    {
         $user = $this->findUserByUsername($username);
 
-        if($user->role == UserType::MODERATOR()){
+        if ($user->role == UserType::MODERATOR()) {
             throw new HttpException(400, "Already downgraded.");
         }
 
@@ -70,7 +72,8 @@ class UserService
         ]);
     }
 
-    public function addStaff($request){
+    public function addStaff($request)
+    {
         User::create([
             "full_name" => $request->full_name,
             "email" => $request->email,
@@ -81,15 +84,29 @@ class UserService
         ]);
     }
 
-    public function getAssignedTasks($id){
+    public function getAssignedTasks($id)
+    {
         $user = User::findById($id);
 
         return $user->tasks()->get();
     }
-    private function findUserByUsername($username){
+
+    private function findUserByUsername($username)
+    {
         $user = User::where("username", $username)->first();
 
-        if (is_null($user)){
+        if (is_null($user)) {
+            throw new HttpException(404, "User not found.");
+        }
+
+        return $user;
+    }
+
+    public function findUserByEmail($email)
+    {
+        $user = User::where('email', $email)->first();
+
+        if (is_null($user)) {
             throw new HttpException(404, "User not found.");
         }
 

@@ -10,10 +10,12 @@ namespace App\Services;
 
 
 use App\Exceptions\InvalidCredentialsException;
+use App\Model\EmailConfirmation;
 use App\Model\User;
-use App\Util\HttpResponse;
+use Carbon\Carbon;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
@@ -91,5 +93,16 @@ class AuthService
         $accessToken->revoke();
 
         $this->cookie->queue($this->cookie->forget("refreshToken"));
+    }
+
+    public function generateResetLink($user){
+        $token = Hash::make($user->username);
+        EmailConfirmation::create([
+            "user_id" => $user->id,
+            "token" => $token,
+            "expires_at" => Carbon::now()->addMinutes(env("EMAIL_EXPIRE_MINUTES"))
+        ]);
+
+        return "http://localhost:4200/reset-password/" . $token;
     }
 }
