@@ -12,8 +12,11 @@ use App\Exceptions\InvalidCredentialsException;
 use App\Http\Requests\CheckHashRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\SigninRequest;
+use App\Http\Requests\UpdatePasswordRequest;
 use App\Mail\ResetPassword;
+use App\Model\EmailConfirmation;
 use App\Services\AuthService;
+use App\Services\HashService;
 use App\Services\UserService;
 use App\Util\HttpResponse;
 use Illuminate\Http\Request;
@@ -26,10 +29,13 @@ class AuthController extends Controller
 
     private $userService;
 
-    public function __construct(AuthService $authSerice, UserService $userService)
+    private $hashService;
+
+    public function __construct(AuthService $authSerice, UserService $userService, HashService $hashService)
     {
         $this->authSerice = $authSerice;
         $this->userService = $userService;
+        $this->hashService = $hashService;
     }
 
     public function logout(Request $request)
@@ -59,7 +65,22 @@ class AuthController extends Controller
     }
 
     public function checkHash(CheckHashRequest $request){
-        dd($request->token);
+        try{
+            $this->hashService->findHash($request->token);
+            return response("", 200);
+        }catch(HttpException $exception){
+            return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
+        }
+    }
+
+    public function updatePassword(UpdatePasswordRequest $request){
+        try{
+            $id = $this->hashService->findUserByHash($request->token);
+            $this->authSerice->updatePassword($id,$request->password);
+            return response("", 200);
+        }catch(HttpException $exception){
+            return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
+        }
     }
 
 }

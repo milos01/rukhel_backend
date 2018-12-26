@@ -25,7 +25,8 @@ class AuthService
 
     private $db;
 
-    public function __construct(Application $app) {
+    public function __construct(Application $app)
+    {
         $this->apiConsumer = $app->make('apiconsumer');
         $this->cookie = $app->make('cookie');
         $this->db = $app->make('db');
@@ -49,9 +50,9 @@ class AuthService
     {
         $data = array_merge($data, [
 
-                "client_id"     => env("HOST_CLIENT_ID"),
-                "client_secret" => env("HOST_CLIENT_SECRET"),
-                "grant_type"    => $grantType
+            "client_id" => env("HOST_CLIENT_ID"),
+            "client_secret" => env("HOST_CLIENT_SECRET"),
+            "grant_type" => $grantType
 
         ]);
 
@@ -95,7 +96,8 @@ class AuthService
         $this->cookie->queue($this->cookie->forget("refreshToken"));
     }
 
-    public function generateResetLink($user){
+    public function generateResetLink($user)
+    {
         $token = Hash::make($user->username);
         EmailConfirmation::create([
             "user_id" => $user->id,
@@ -104,5 +106,12 @@ class AuthService
         ]);
 
         return "http://localhost:4200/reset-password/" . $token;
+    }
+
+    public function updatePassword($id, $password)
+    {
+        User::where("id", $id)->update([
+            "password" => bcrypt($password)
+        ]);
     }
 }

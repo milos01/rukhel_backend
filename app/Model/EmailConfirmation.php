@@ -17,4 +17,11 @@ class EmailConfirmation extends Model
     protected $dates = [
         "expires_at"
     ];
+
+    /**
+     * Get the user related to file.
+     */
+    public function user(){
+        return $this->belongsTo("App\Model\User");
+    }
 }

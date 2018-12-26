@@ -19,6 +19,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'cors'], function () {
     Route::post('signup', 'UserController@signup');
     Route::post('reset-link', 'AuthController@sendResetLink');
     Route::get('check-hash', 'AuthController@checkHash');
+    Route::post('update-password', 'AuthController@updatepassword');
 
     Route::group(['middleware' => 'auth:api'], function() {
         Route::get('logout', 'AuthController@logout');
@@ -32,7 +33,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'token']], functi
 
     Route::put('/', 'UserController@updateUser')->name('updateUser');
     Route::get('/', 'UserController@getUser');
-    Route::post('/change-password', 'UserController@changePassword');
+    Route::post('/change-password', 'UserController@changePassword')->middleware("role:ADMIN,MODERATOR,USER");
     Route::get('/{id}', 'UserController@getUserByUsername');
     Route::delete('/{username}', 'UserController@deleteUserByUsername')->middleware("role:ADMIN");
     Route::get('/activate/{username}', 'UserController@activateUser')->middleware("role:ADMIN");
