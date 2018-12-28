@@ -10,6 +10,7 @@ use App\Model\User;
 use App\Services\UserService;
 use App\Util\HttpResponse;
 use App\Util\Traits\Collectable;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use App\Repository\UserRepository;
@@ -55,6 +56,9 @@ class UserController extends Controller
 
     public function updateUser(UserRequest $request){
         try {
+            $date = Carbon::parse($request->dob);
+            $request["dob"] = $date;
+
             User::where("id", $request->user()->id)->update($request->all());
             return response("", 200);
         }

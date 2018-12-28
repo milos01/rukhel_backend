@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('provider')->nullable();
             $table->string('provider_id')->nullable();
             $table->boolean('activated')->default(false);
+            $table->date('dob');
             $table->timestamps();
             $table->softDeletes();
         });

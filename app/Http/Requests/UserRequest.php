@@ -25,6 +25,7 @@ class UserRequest extends FormRequest
     {
         return [
             'full_name' => 'max:255',
+            'dob' => 'required|date',
             'email' => 'email|unique:users|max:255',
             'username' => 'unique:users|max:255',
         ];
