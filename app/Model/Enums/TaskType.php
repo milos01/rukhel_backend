@@ -11,9 +11,13 @@ namespace App\Model\Enums;
 use MyCLabs\Enum\Enum;
 
 /**
- * @method static Action WAITING()
  * @method static Action SOLVING()
+ * @method static Action SOLVED()
+ * @method static Action NOOFFER()
+ * @method static Action PAID()
+ * @method static Action WAITING()
  * @method static Action EXPIRED()
+ * @method static Action OFFERED()
  */
 class TaskType extends Enum
 {
@@ -23,4 +27,5 @@ class TaskType extends Enum
     private const PAID = 'PAID';
     private const WAITING = 'WAITING';
     private const EXPIRED = 'EXPIRED';
+    private const OFFERED = 'OFFERED';
 }

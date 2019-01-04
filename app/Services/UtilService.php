@@ -23,6 +23,10 @@ trait UtilService
             unset($params["page"]);
         }
 
+        if (isset($params["status"]) && $params["status"] === "ALL") {
+            unset($params["status"]);
+        }
+
         return $params;
     }
 
