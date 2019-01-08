@@ -19,7 +19,8 @@ class ElasticsearchTaskRepository implements TaskRepository
 
     private $search;
 
-    public function __construct(Client $client) {
+    public function __construct(Client $client)
+    {
         $this->search = $client;
     }
 
@@ -30,7 +31,8 @@ class ElasticsearchTaskRepository implements TaskRepository
         return $this->buildCollection($items);
     }
 
-    private function searchOnElasticsearch(string $query, array $termList): array {
+    private function searchOnElasticsearch(string $query, array $termList): array
+    {
         $instance = new Task();
 
         $items = $this->search->search([
@@ -42,30 +44,54 @@ class ElasticsearchTaskRepository implements TaskRepository
         return $items;
     }
 
-    private function filterQuery($query, $termList){
-        if ($query === "all"){
+    private function filterQuery($query, $termList)
+    {
+        if ($query === "all") {
             return [
                 "query" => [
                     "bool" => [
                         "must" => [
-                            $termList
+                            $termList,
                         ]
-                    ]
+                    ],
+////                    "nested" => [
+////                        "path" => "categories",
+////                        "query" => [
+////                            "bool" => [
+////                                "must" => [
+////                                    ["match" => ["categories.name" => "math"]],
+////                                ]
+////                            ]
+////                        ]
+////                    ]
                 ],
                 "sort" => [
                     "id" => ["order" => "asc"]
                 ]
             ];
-        } else{
+        } else {
             return [
                 "query" => [
                     "bool" => [
                         "must" => [
                             "query_string" => [
                                 "fields" => ["subject^2", "description"],
-                                "query" =>  $query. "*",
+                                "query" => $query . "*",
                                 "allow_leading_wildcard" => false,
                                 'fuzziness' => 'AUTO',
+                            ],
+                            "nested" => [
+                                "path" => "categories",
+                                "score_mode" => "max",
+                                "query" => [
+                                    "bool" => [
+                                        "must" => [
+                                            "match" => [
+                                                "categories.name" => "math"
+                                            ]
+                                        ]
+                                    ]
+                                ]
                             ]
                         ],
                         "filter" => $termList
@@ -75,9 +101,17 @@ class ElasticsearchTaskRepository implements TaskRepository
         }
     }
 
-    private function buildCollection(array $items): Collection {
+    private function buildCollection(array $items): Collection
+    {
         $hits = array_pluck($items['hits']['hits'], '_source') ?: [];
+
+        $sources = array_map(function ($source) {
+            // The hydrate method will try to decode this
+            // field but ES gives us an array already.
+            $source['categories'] = json_encode($source['categories']);
+            return $source;
+        }, $hits);
         // We have to convert the results array into Eloquent Models.
-        return Task::hydrate($hits);
+        return Task::hydrate($sources);
     }
 }

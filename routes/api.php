@@ -49,7 +49,7 @@ Route::group(['middleware' => ['auth:api', 'token']], function (){
     Route::post('/category', 'CategoryController@addCategory')->middleware("role:ADMIN");
     Route::delete('/category/{name}', 'CategoryController@deleteCategory')->middleware("role:ADMIN");
     Route::put('/category/{name}', 'CategoryController@activateCategory')->middleware("role:ADMIN");
-    Route::get('/categories', 'CategoryController@getCategories')->middleware("role:ADMIN");
+    Route::get('/categories', 'CategoryController@getCategories')->middleware("role:ADMIN,MODERATOR");
 });
 
 Route::group(['prefix' => 'task', 'middleware' => ['auth:api', 'token']], function (){

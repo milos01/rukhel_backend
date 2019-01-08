@@ -22,6 +22,7 @@ class Task extends Model
         'solution_description',
         'time_ends_at',
         'status',
+        'categories',
         'biding_expires_at',
     ];
 
@@ -31,6 +32,10 @@ class Task extends Model
 
     protected $hidden = [
         'pivot'
+    ];
+
+    protected $casts = [
+        'categories' => 'json',
     ];
 
     /**

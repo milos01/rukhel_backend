@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use SoftDeletes, BaseModel;
+    use SoftDeletes, Searchable, BaseModel;
 
     protected $table = "categories";
 

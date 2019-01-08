@@ -27,6 +27,7 @@ class UsersTableSeeder extends Seeder
                 'provider' => str_random(8),
                 'provider_id' => str_random(8),
                 'activated' => true,
+                'dob' => Carbon::now(),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
@@ -42,6 +43,7 @@ class UsersTableSeeder extends Seeder
                 'provider' => str_random(8),
                 'provider_id' => str_random(8),
                 'activated' => true,
+                'dob' => Carbon::now(),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
@@ -57,6 +59,7 @@ class UsersTableSeeder extends Seeder
                 'provider' => str_random(8),
                 'provider_id' => str_random(8),
                 'activated' => true,
+                'dob' => Carbon::now(),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);

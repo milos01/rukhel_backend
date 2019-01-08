@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Model\Category;
 use App\Model\Task;
 use App\Model\User;
 use Illuminate\Console\Command;
@@ -46,6 +47,18 @@ class ReindexCommand extends Command
         $this->info('Indexing all articles. Might take a while...');
 
         foreach (User::cursor() as $model)
+        {
+            $this->search->index([
+                'index' => $model->getSearchIndex(),
+                'type' => $model->getSearchType(),
+                'id' => $model->id,
+                'body' => $model->toSearchArray(),
+            ]);
+            // PHPUnit-style feedback
+            $this->output->write('.');
+        }
+
+        foreach (Category::cursor() as $model)
         {
             $this->search->index([
                 'index' => $model->getSearchIndex(),
