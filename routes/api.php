@@ -55,6 +55,7 @@ Route::group(['middleware' => ['auth:api', 'token']], function (){
 Route::group(['prefix' => 'task', 'middleware' => ['auth:api', 'token']], function (){
     Route::post('/', 'TaskController@addTask')->middleware("role:ADMIN,MODERATOR,USER");
     Route::get('/{id}/single', 'TaskController@getTask')->middleware("role:ADMIN,MODERATOR,USER");
+    Route::post('/{id}/offer', 'TaskController@postOffer')->middleware("role:ADMIN,MODERATOR");
     Route::get('/{id}/take', 'TaskController@takeTask')->middleware("role:ADMIN,MODERATOR");
     Route::delete('/{id}', 'TaskController@inactiveTask')->middleware("role:ADMIN,MODERATOR");
     Route::get('/{id}/assigned', 'TaskController@getAssignedUsers')->middleware("role:ADMIN,MODERATOR");

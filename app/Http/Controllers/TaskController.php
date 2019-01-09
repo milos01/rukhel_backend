@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OfferRequest;
 use App\Http\Requests\TaskRequest;
 use App\Model\Category;
+use App\Model\Task;
 use App\Repository\TaskRepository;
 use App\Services\CategoryService;
 use App\Services\TaskService;
@@ -27,9 +29,9 @@ class TaskController extends Controller
 
     public function addTask(TaskRequest $request){
         try{
-            $category_id = $this->categoryService->findCategoryIdByName($request->category);
+            $category = $this->categoryService->findDependentCategoryIdByName($request->category);
 
-            $this->taskService->addTask($request, $category_id);
+            $this->taskService->addTask($request, $category);
             return response("", 200);
         }catch(HttpException $exception){
             return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
@@ -124,5 +126,21 @@ class TaskController extends Controller
         }catch(HttpException $exception){
             return response($exception->getMessage(), 500);
         }
+    }
+
+    public function postOffer($id, OfferRequest $request){
+        try{
+            $task = Task::findById($id);
+
+//            $this->taskService->attachUserToTask($task, $request);
+            $this->taskService->updateBestOffer($task);
+
+            return response("", 200);
+        }catch(HttpException $exception){
+            return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
+        }
+
+
+
     }
 }

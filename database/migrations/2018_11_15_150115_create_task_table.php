@@ -28,6 +28,7 @@ class CreateTaskTable extends Migration
             $table->timestamp('biding_expires_at')->nullable();
             $table->string('status');
             $table->json('categories');
+            $table->json('best_offer')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

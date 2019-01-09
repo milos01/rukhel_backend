@@ -23,6 +23,7 @@ class Task extends Model
         'time_ends_at',
         'status',
         'categories',
+        'best_offer',
         'biding_expires_at',
     ];
 
@@ -36,6 +37,7 @@ class Task extends Model
 
     protected $casts = [
         'categories' => 'json',
+        'best_offer' => 'json',
     ];
 
     /**
@@ -64,6 +66,6 @@ class Task extends Model
      */
     public function users()
     {
-        return $this->belongsToMany(User::class, 'user_task', 'task_id', 'user_id');
+        return $this->belongsToMany(User::class, 'user_task', 'task_id', 'user_id')->withPivot('offer');
     }
 }

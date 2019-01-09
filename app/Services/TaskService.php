@@ -20,16 +20,16 @@ class TaskService
 {
     use UtilService;
 
-    public function addTask(Request $request, $category_id){
+    public function addTask(Request $request, $category){
         Task::create([
             "subject" => $request->subject,
             "slug" => str_slug($request->subject, "-"),
             "user_creator_id" => $request->user()->id,
-            "category_id" => $category_id,
+            "category_id" => $category->id,
             "description" => $request->description,
             "biding_expires_at" => Carbon::now()->addMinutes(env("BID_EXPIRE_MINUTES")),
             "status" => "some status",
-
+            "categories" => $category
         ]);
     }
 
@@ -91,5 +91,23 @@ class TaskService
             "biding_expires_at" => $this->getTimeNow()->addMinutes(env("BID_EXPIRE_MINUTES")),
             "status" => TaskType::WAITING(),
         ]);
+    }
+
+    public function attachUserToTask($task, $request){
+
+
+        $exist = $task->users()->where("user_id", $request->user()->id)->exists();
+
+        if ($exist) {
+            throw new HttpException(422, "User offered on task.");
+        }
+
+        $task->users()->attach($request->user()->id, ["offer" => $request->offer]);
+    }
+
+    public function updateBestOffer($task){
+        foreach ($task->users as $user) {
+            var_dump($user->pivot->offer);
+        }
     }
 }

@@ -54,16 +54,6 @@ class ElasticsearchTaskRepository implements TaskRepository
                             $termList,
                         ]
                     ],
-////                    "nested" => [
-////                        "path" => "categories",
-////                        "query" => [
-////                            "bool" => [
-////                                "must" => [
-////                                    ["match" => ["categories.name" => "math"]],
-////                                ]
-////                            ]
-////                        ]
-////                    ]
                 ],
                 "sort" => [
                     "id" => ["order" => "asc"]
@@ -79,19 +69,6 @@ class ElasticsearchTaskRepository implements TaskRepository
                                 "query" => $query . "*",
                                 "allow_leading_wildcard" => false,
                                 'fuzziness' => 'AUTO',
-                            ],
-                            "nested" => [
-                                "path" => "categories",
-                                "score_mode" => "max",
-                                "query" => [
-                                    "bool" => [
-                                        "must" => [
-                                            "match" => [
-                                                "categories.name" => "math"
-                                            ]
-                                        ]
-                                    ]
-                                ]
                             ]
                         ],
                         "filter" => $termList

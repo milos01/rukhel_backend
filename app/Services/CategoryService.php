@@ -54,4 +54,14 @@ class CategoryService
 
         return $category->id;
     }
+
+    public function findDependentCategoryIdByName($name){
+        $category = Category::select("id", "name", "display_name", "color")->where("name", $name)->first();
+
+        if (is_null($category)){
+            throw new HttpException(404, "Category not found.");
+        }
+
+        return $category;
+    }
 }
