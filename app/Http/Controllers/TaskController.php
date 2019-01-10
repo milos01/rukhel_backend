@@ -132,7 +132,7 @@ class TaskController extends Controller
         try{
             $task = Task::findById($id);
 
-//            $this->taskService->attachUserToTask($task, $request);
+            $this->taskService->attachUserToTask($task, $request);
             $this->taskService->updateBestOffer($task);
 
             return response("", 200);

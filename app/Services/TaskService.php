@@ -106,8 +106,37 @@ class TaskService
     }
 
     public function updateBestOffer($task){
+        $minimaOffer = $this->findMinimaOffer($task);
+
+        $task->update([
+            "status" => TaskType::OFFERED(),
+            "best_offer" => json_encode($minimaOffer)
+        ]);
+    }
+
+    private function findMinimaOffer($task) {
+        $minima = PHP_INT_MAX;
+        $offerCreated = '';
         foreach ($task->users as $user) {
-            var_dump($user->pivot->offer);
+            $taskOffer = $user->pivot->offer;
+            if ($taskOffer < $minima) {
+                $minima = $taskOffer;
+                $offerCreated = $user->pivot->created_at;
+            }
         }
+
+        return [
+           "created_at" => $offerCreated->toDateTimeString(),
+           "offer" => $minima
+        ];
+    }
+
+    public function updateTaskFiles($file, $id){
+        $taskFiles = Task::findById($id)->files;
+
+        array_push($taskFiles, $file);
+        Task::findById($id)->update([
+            "files" => $taskFiles
+        ]);
     }
 }

@@ -23,7 +23,7 @@ class UploadService
     public function addTaskFile($hash_name, $task_id){
         Task::findById($task_id);
 
-        File::create([
+        return File::create([
             "hash_name" => $hash_name,
             "task_id" => $task_id
         ]);

@@ -29,6 +29,7 @@ class CreateTaskTable extends Migration
             $table->string('status');
             $table->json('categories');
             $table->json('best_offer')->nullable();
+            $table->json('files')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
