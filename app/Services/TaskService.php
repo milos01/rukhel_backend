@@ -20,7 +20,8 @@ class TaskService
 {
     use UtilService;
 
-    public function addTask(Request $request, $category){
+    public function addTask(Request $request, $category)
+    {
         Task::create([
             "subject" => $request->subject,
             "slug" => str_slug($request->subject, "-"),
@@ -33,58 +34,62 @@ class TaskService
         ]);
     }
 
-    public function getTaskById($id){
+    public function getTaskById($id)
+    {
         $task = Task::findById($id);
 
         return $task;
     }
 
-    public function takeTaskById($id, Request $request){
+    public function takeTaskById($id, Request $request)
+    {
         $task = Task::findById($id);
 
         $task->update([
             "status" => TaskType::SOLVING(),
             "user_solver_id" => $request->user()->id
         ]);
+        //TODO find user by offer
     }
 
-    public function inactiveTask($id){
+    public function inactiveTask($id)
+    {
         $task = Task::findById($id);
 
         $task->delete();
     }
 
-    public function getAssignedUsers($id){
+    public function getAssignedUsers($id)
+    {
         $task = Task::findById($id);
 
         return $task->users;
     }
 
-    public function assignUserToTask($id, $user_id){
+    public function assignUserToTask($id, $user_id)
+    {
         $task = Task::findById($id);
 
-        $exist = $task->users()->where("user_id", $user_id)->exists();
-
-        if ($exist) {
-            throw new HttpException(422, "User already assigned to task.");
-        }
-
-        $task->users()->attach($user_id);
+        $task->update([
+            "user_solver_id" => $user_id
+        ]);
     }
 
-    public function dismissUserToTask($id, $user_id){
+    public function dismissUserToTask($id, $user_id)
+    {
         $task = Task::findById($id);
 
         $exist = $task->users()->where("user_id", $user_id)->exists();
 
-        if(!$exist) {
+        if (!$exist) {
             throw new HttpException(422, "User not assigned to task.");
         }
 
         $task->users()->detach($user_id);
     }
 
-    public function resetTaskExpire($id){
+    public function resetTaskExpire($id)
+    {
         $task = Task::findById($id);
 
         $task->update([
@@ -93,7 +98,8 @@ class TaskService
         ]);
     }
 
-    public function attachUserToTask($task, $request){
+    public function attachUserToTask($task, $request)
+    {
 
 
         $exist = $task->users()->where("user_id", $request->user()->id)->exists();
@@ -105,7 +111,8 @@ class TaskService
         $task->users()->attach($request->user()->id, ["offer" => $request->offer]);
     }
 
-    public function updateBestOffer($task){
+    public function updateBestOffer($task)
+    {
         $minimaOffer = $this->findMinimaOffer($task);
 
         $task->update([
@@ -114,29 +121,38 @@ class TaskService
         ]);
     }
 
-    private function findMinimaOffer($task) {
+    private function findMinimaOffer($task)
+    {
         $minima = PHP_INT_MAX;
-        $offerCreated = '';
         foreach ($task->users as $user) {
             $taskOffer = $user->pivot->offer;
             if ($taskOffer < $minima) {
+                $id = $user->pivot->id;
                 $minima = $taskOffer;
                 $offerCreated = $user->pivot->created_at;
             }
         }
 
         return [
-           "created_at" => $offerCreated->toDateTimeString(),
-           "offer" => $minima
+            "id" => $id,
+            "created_at" => $offerCreated->toDateTimeString(),
+            "offer" => $minima
         ];
     }
 
-    public function updateTaskFiles($file, $id){
-        $taskFiles = Task::findById($id)->files;
+    public function updateTaskFiles($file, $id)
+    {
+        $task = Task::findById($id);
+        $tempArray = json_decode($task->testcol);
 
-        array_push($taskFiles, $file);
+        $data = [
+            "id" => $task->id,
+            "hash_name" => $file->hash_name
+        ];
+
+        array_push($tempArray, $data);
         Task::findById($id)->update([
-            "files" => $taskFiles
+            "testcol" => json_encode($tempArray)
         ]);
     }
 }
