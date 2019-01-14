@@ -43,23 +43,26 @@ class Task extends Model
     ];
 
     /**
- * Get the user that created task.
- */
-    public function userCreator(){
+     * Get the user that created task.
+     */
+    public function userCreator()
+    {
         return $this->belongsTo("App\Model\User");
     }
 
     /**
      * Get the user that is main solver on task.
      */
-    public function userSolver(){
+    public function userSolver()
+    {
         return $this->belongsTo("App\Model\User");
     }
 
     /**
      * Get the category of task.
      */
-    public function category(){
+    public function category()
+    {
         return $this->belongsTo("App\Model\Category");
     }
 
@@ -71,7 +74,8 @@ class Task extends Model
         return $this->belongsToMany(User::class, 'user_task', 'task_id', 'user_id')->withPivot('id', 'offer')->withTimestamps();
     }
 
-    public function allFiles(){
+    public function allFiles()
+    {
         return $this->hasMany('App\Model\File');
     }
 }

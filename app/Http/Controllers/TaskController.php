@@ -74,10 +74,10 @@ class TaskController extends Controller
         }
     }
 
-    public function assignUserToTask($id, $user_id){
+    public function acceptUserOffer($id, $offer_id){
         try{
-            $this->taskService->assignUserToTask($id, $user_id);
-            return response("", 200);
+            $task = $this->taskService->assignUserToTask($id, $offer_id);
+            return response($task, 200);
         }catch(HttpException $exception){
             return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
         }
@@ -139,8 +139,14 @@ class TaskController extends Controller
         }catch(HttpException $exception){
             return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
         }
+    }
 
-
-
+    public function declineUserOffer($id, $offer_id){
+        try{
+            $task = $this->taskService->declineOffer($id, $offer_id);
+            return response($task, 200);
+        }catch(HttpException $exception){
+            return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());
+        }
     }
 }

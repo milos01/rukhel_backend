@@ -49,7 +49,6 @@ class TaskService
             "status" => TaskType::SOLVING(),
             "user_solver_id" => $request->user()->id
         ]);
-        //TODO find user by offer
     }
 
     public function inactiveTask($id)
@@ -66,13 +65,22 @@ class TaskService
         return $task->users;
     }
 
-    public function assignUserToTask($id, $user_id)
+    public function assignUserToTask($id, $offer_id)
     {
         $task = Task::findById($id);
 
-        $task->update([
-            "user_solver_id" => $user_id
-        ]);
+        foreach ($task->users as $user) {
+            if ($user->pivot->id == $offer_id) {
+                $task->update([
+                    "user_solver_id" => $user->pivot->user_id,
+                    "status" => TaskType::SOLVING()
+                ]);
+            }
+        }
+
+        $task->best_offer = json_decode($task->best_offer);
+
+        return $task;
     }
 
     public function dismissUserToTask($id, $user_id)
@@ -154,5 +162,17 @@ class TaskService
         Task::findById($id)->update([
             "testcol" => json_encode($tempArray)
         ]);
+    }
+
+    public function declineOffer($id, $offer_id){
+        $task = Task::findById($id);
+
+        foreach ($task->users as $user) {
+            if ($user->pivot->id == $offer_id) {
+                $task->users()->detach($user->pivot->user_id);
+            }
+        }
+
+        return $task;
     }
 }
