@@ -136,13 +136,19 @@ class TaskService
             $taskOffer = $user->pivot->offer;
             if ($taskOffer < $minima) {
                 $id = $user->pivot->id;
+                $user_id = $user->pivot->user_id;
                 $minima = $taskOffer;
                 $offerCreated = $user->pivot->created_at;
             }
         }
 
+        if (!isset($id)) {
+            return [];
+        }
+
         return [
             "id" => $id,
+            "user_id" => $user_id,
             "created_at" => $offerCreated->toDateTimeString(),
             "offer" => $minima
         ];
@@ -164,14 +170,32 @@ class TaskService
         ]);
     }
 
-    public function declineOffer($id, $offer_id){
+    public function declineOffer($id, $user_id){
         $task = Task::findById($id);
 
-        foreach ($task->users as $user) {
-            if ($user->pivot->id == $offer_id) {
-                $task->users()->detach($user->pivot->user_id);
-            }
+        $exist = $task->users()->where("user_id", $user_id)->exists();
+
+        if (!$exist) {
+            throw new HttpException(422, "User not assigned to task.");
         }
+
+        $task->users()->detach($user_id);
+
+        $minimaOffer = $this->findMinimaOffer($task);
+
+        if (empty($minimaOffer)) {
+            $task->update([
+                "status" => TaskType::WAITING(),
+                "best_offer" => json_encode($minimaOffer)
+            ]);
+        } else {
+            $task->update([
+                "best_offer" => json_encode($minimaOffer)
+            ]);
+        }
+
+        $task->best_offer = json_decode($task->best_offer);
+        $task->testcol = json_decode($task->testcol);
 
         return $task;
     }

@@ -141,9 +141,9 @@ class TaskController extends Controller
         }
     }
 
-    public function declineUserOffer($id, $offer_id){
+    public function declineUserOffer($id, $user_id){
         try{
-            $task = $this->taskService->declineOffer($id, $offer_id);
+            $task = $this->taskService->declineOffer($id, $user_id);
             return response($task, 200);
         }catch(HttpException $exception){
             return response(HttpResponse::handleResponse($exception->getMessage()), $exception->getStatusCode());

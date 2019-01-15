@@ -60,7 +60,7 @@ Route::group(['prefix' => 'task', 'middleware' => ['auth:api', 'token']], functi
     Route::delete('/{id}', 'TaskController@inactiveTask')->middleware("role:ADMIN,MODERATOR");
     Route::get('/{id}/assigned', 'TaskController@getAssignedUsers')->middleware("role:ADMIN,MODERATOR");
     Route::get('/{id}/assign/{offer_id}', 'TaskController@acceptUserOffer')->middleware("role:ADMIN,MODERATOR,USER");
-    Route::get('/{id}/decline/{offer_id}', 'TaskController@declineUserOffer')->middleware("role:ADMIN,MODERATOR,USER");
+    Route::get('/{id}/decline/{user_id}', 'TaskController@declineUserOffer')->middleware("role:ADMIN,MODERATOR,USER");
     Route::delete('/{id}/assign/{user_id}', 'TaskController@dismissUserToTask')->middleware("role:ADMIN,MODERATOR");
     Route::put('/{id}/engage', 'TaskController@resetTaskExpire')->middleware("role:ADMIN,MODERATOR,USER");
     Route::get('/find', 'TaskController@getAllTasks')->middleware("role:ADMIN,MODERATOR,USER");
